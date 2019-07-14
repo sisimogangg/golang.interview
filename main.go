@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 func gen() <-chan int {
@@ -22,30 +21,34 @@ func gen() <-chan int {
 	return out
 }
 
-func sumUp(in <-chan int) <-chan int {
+func sumUp(done <-chan struct{}, in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
-		defer func() {
-			close(out)
-		}()
 
 		sum := 0
+
 		for i := range in {
 			sum += i
 		}
-		out <- sum
+
+		select {
+		case out <- sum:
+		case <-done:
+			break
+		}
 
 	}()
 	return out
 }
 
 func main() {
-	//done := make(chan struct{})
+	done := make(chan struct{})
 
 	out := gen()
-	sum := sumUp(out)
+	sum := sumUp(done, out)
+	//done <- struct{}{}
 
 	fmt.Println(<-sum)
+	//time.Sleep(5 * time.Second)
 
-	time.Sleep(4 * time.Second)
 }
