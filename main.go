@@ -33,7 +33,7 @@ func sumUp(done <-chan struct{}, in <-chan int) <-chan int {
 
 		select {
 		case out <- sum:
-		case <-done:
+		case <-done: // Not required because this will not block
 			break
 		}
 
@@ -46,9 +46,9 @@ func main() {
 
 	out := gen()
 	sum := sumUp(done, out)
-	//done <- struct{}{}
+	//done <- struct{}{} // not required
 
-	fmt.Println(<-sum)
-	//time.Sleep(5 * time.Second)
+	fmt.Println("Sum: ", <-sum)
+	//time.Sleep(5 * time.Second) // only require if the sum func blocks
 
 }
