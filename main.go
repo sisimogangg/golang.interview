@@ -47,11 +47,5 @@ func main() {
 
 	fmt.Println(<-sum)
 
-	/*defer func() {
-		if err := recover(); err != nil {
-			log.Println("Shit", err)
-		}
-	}()*/
-
 	time.Sleep(4 * time.Second)
 }
