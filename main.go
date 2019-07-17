@@ -21,22 +21,6 @@ func gen() <-chan int {
 	return out
 }
 
-func sumUp(done <-chan struct{}, in <-chan int) <-chan int {
-	out := make(chan int)
-	go func() {
-
-		sum := 0
-
-		for i := range in {
-			sum += i
-		}
-
-		out <- sum
-
-	}()
-	return out
-}
-
 func main() {
 	sumCh := make(chan int)
 
