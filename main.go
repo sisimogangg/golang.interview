@@ -41,7 +41,6 @@ func main() {
 	sumCh := make(chan int)
 
 	genCh := gen()
-	// sum := sumUp(doneCh, genCh)
 
 	defer func() {
 		close(sumCh)
@@ -58,9 +57,7 @@ func main() {
 		sumCh <- sum
 
 	}()
-	//done <- struct{}{} // not required
 
 	fmt.Println("Sum: ", <-sumCh)
-	//time.Sleep(5 * time.Second) // only require if the sum func blocks
 
 }
