@@ -31,24 +31,36 @@ func sumUp(done <-chan struct{}, in <-chan int) <-chan int {
 			sum += i
 		}
 
-		select {
-		case out <- sum:
-		case <-done: // Not required because this will not block
-			break
-		}
+		out <- sum
 
 	}()
 	return out
 }
 
 func main() {
-	done := make(chan struct{})
+	sumCh := make(chan int)
 
-	out := gen()
-	sum := sumUp(done, out)
+	genCh := gen()
+	// sum := sumUp(doneCh, genCh)
+
+	defer func() {
+		close(sumCh)
+	}()
+
+	go func() {
+
+		sum := 0
+
+		for i := range genCh {
+			sum += i
+		}
+
+		sumCh <- sum
+
+	}()
 	//done <- struct{}{} // not required
 
-	fmt.Println("Sum: ", <-sum)
+	fmt.Println("Sum: ", <-sumCh)
 	//time.Sleep(5 * time.Second) // only require if the sum func blocks
 
 }
